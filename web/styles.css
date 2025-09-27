@@ -1,0 +1,532 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(180deg, #87CEEB 0%, #98FB98 30%, #90EE90 100%);
+    min-height: 100vh;
+    overflow-x: auto;
+}
+
+/* Game Container */
+.game-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.game-header {
+    background: linear-gradient(45deg, #FFD700, #FFA500, #FF6347);
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border-bottom: 5px solid #8B4513;
+}
+
+.game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    color: #8B4513;
+    text-shadow: 3px 3px 0px #FFD700, 6px 6px 0px #FF6347;
+    margin-bottom: 10px;
+    animation: titleBounce 2s ease-in-out infinite alternate;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #654321;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+}
+
+@keyframes titleBounce {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-5px); }
+}
+
+/* Racing Container */
+.racing-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, #87CEEB 0%, #90EE90 20%, #228B22 100%);
+    min-height: 500px;
+}
+
+/* Grandstand */
+.grandstand {
+    height: 80px;
+    background: linear-gradient(180deg, #A0A0A0 0%, #808080 100%);
+    border-bottom: 3px solid #696969;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    position: relative;
+}
+
+.spectators {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 10px;
+}
+
+.spectator {
+    font-size: 1.5rem;
+    animation: cheer 3s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.5s);
+}
+
+.spectator:nth-child(1) { --i: 0; }
+.spectator:nth-child(2) { --i: 1; }
+.spectator:nth-child(3) { --i: 2; }
+.spectator:nth-child(4) { --i: 3; }
+.spectator:nth-child(5) { --i: 4; }
+.spectator:nth-child(6) { --i: 5; }
+.spectator:nth-child(7) { --i: 6; }
+.spectator:nth-child(8) { --i: 7; }
+
+@keyframes cheer {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(10deg); }
+}
+
+/* Track Container */
+.track-container {
+    flex: 1;
+    position: relative;
+    background: repeating-linear-gradient(
+        90deg,
+        #228B22 0px,
+        #228B22 20px,
+        #32CD32 20px,
+        #32CD32 40px
+    );
+    border-top: 3px solid #8B4513;
+}
+
+.finish-line {
+    position: absolute;
+    right: 50px;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: repeating-linear-gradient(
+        0deg,
+        #000 0px,
+        #000 10px,
+        #fff 10px,
+        #fff 20px
+    );
+    z-index: 10;
+}
+
+.finish-line::before {
+    content: "FINISH";
+    position: absolute;
+    top: -30px;
+    left: -25px;
+    background: #FFD700;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: #8B4513;
+    border: 2px solid #8B4513;
+}
+
+/* Race Track */
+.race-track {
+    height: 100%;
+    min-height: 200px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+/* Horse Lane */
+.horse-lane {
+    height: 60px;
+    border-bottom: 2px solid #8B4513;
+    border-top: 2px solid #654321;
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    background: linear-gradient(90deg, 
+        rgba(50, 205, 50, 0.3) 0%, 
+        rgba(34, 139, 34, 0.3) 100%);
+}
+
+.horse-lane:nth-child(odd) {
+    background: linear-gradient(90deg, 
+        rgba(144, 238, 144, 0.3) 0%, 
+        rgba(50, 205, 50, 0.3) 100%);
+}
+
+/* Horse Container */
+.horse-container {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    transition: left 1.5s ease-out;
+    z-index: 5;
+}
+
+.horse-container.moving {
+    transition: left 0.8s ease-out;
+    animation: moveForward 0.8s ease-out;
+}
+
+@keyframes moveForward {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.horse-sprite {
+    width: 48px;
+    height: 48px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.horse-info {
+    margin-left: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 15px;
+    border: 2px solid #8B4513;
+    font-weight: bold;
+    color: #654321;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Horse Animation */
+@keyframes gallop {
+    0% { background-position-x: 0px; }
+    25% { background-position-x: -48px; }
+    50% { background-position-x: -96px; }
+    75% { background-position-x: -144px; }
+    100% { background-position-x: 0px; }
+}
+
+/* Leaderboard */
+.leaderboard {
+    background: rgba(255, 255, 255, 0.95);
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #8B4513;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.leaderboard h2 {
+    font-family: 'Fredoka One', cursive;
+    color: #8B4513;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leaderboard-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    border-radius: 10px;
+    border: 2px solid #8B4513;
+    font-weight: bold;
+    color: #654321;
+}
+
+.leaderboard-entry.first {
+    background: linear-gradient(90deg, #FFD700, #FF6347);
+    box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
+}
+
+.leaderboard-entry.second {
+    background: linear-gradient(90deg, #C0C0C0, #A0A0A0);
+}
+
+.leaderboard-entry.third {
+    background: linear-gradient(90deg, #CD7F32, #8B4513);
+    color: white;
+}
+
+/* Controls */
+.controls {
+    background: rgba(255, 255, 255, 0.9);
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #8B4513;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #32CD32, #228B22);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, #FF6347, #DC143C);
+    color: white;
+}
+
+.btn-accent {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: #8B4513;
+}
+
+.btn-test {
+    background: linear-gradient(45deg, #FF69B4, #FF1493);
+    color: white;
+    font-size: 0.9rem;
+}
+
+.race-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    color: #654321;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Test Controls - REMOVE WHEN DONE TESTING */
+.test-controls {
+    background: rgba(255, 182, 193, 0.95);
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #FF1493;
+    border-style: dashed;
+}
+
+.test-controls h3 {
+    color: #C71585;
+    margin-bottom: 15px;
+    font-family: 'Fredoka One', cursive;
+    text-align: center;
+}
+
+.test-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.test-info {
+    flex: 1 1 100%;
+    text-align: center;
+    color: #8B008B;
+    margin-top: 10px;
+}
+
+#test-user-select {
+    padding: 8px 12px;
+    border: 2px solid #FF1493;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+}
+
+/* Configuration Panel */
+.config-panel {
+    background: rgba(255, 255, 255, 0.95);
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #8B4513;
+}
+
+.config-panel h3 {
+    color: #8B4513;
+    margin-bottom: 15px;
+    font-family: 'Fredoka One', cursive;
+}
+
+.config-group {
+    margin-bottom: 15px;
+}
+
+.config-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #654321;
+    font-weight: bold;
+}
+
+.config-group input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #8B4513;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.config-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    color: white;
+}
+
+.loading-overlay.show {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #333;
+    border-top: 5px solid #FFD700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2rem;
+    }
+    
+    .horse-lane {
+        height: 50px;
+    }
+    
+    .horse-sprite {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .controls {
+        flex-direction: column;
+    }
+    
+    .leaderboard-entry {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
+}
+
+/* Horse-specific sprite backgrounds with cycling animation frames */
+.horse-1 { background-image: url('./assets/horse1/transparent/Screenshot_2025-09-26_at_9.56.03_PM-removebg-preview.png'); }
+.horse-2 { background-image: url('./assets/horse2/animation1.png'); }
+.horse-3 { background-image: url('./assets/horse3/transparent/Screenshot_2025-09-26_at_9.56.03_PM-removebg-preview.png'); }
+.horse-4 { background-image: url('./assets/placeholder.svg'); }
+.horse-5 { background-image: url('./assets/placeholder.svg'); }
+.horse-6 { background-image: url('./assets/placeholder.svg'); }
+.horse-7 { background-image: url('./assets/placeholder.svg'); }
+.horse-8 { background-image: url('./assets/placeholder.svg'); }
+.horse-9 { background-image: url('./assets/placeholder.svg'); }
+.horse-10 { background-image: url('./assets/placeholder.svg'); }
+
+/* Enhanced galloping animation that cycles through different frames */
+@keyframes gallop-cycle-1 {
+    0% { background-image: url('./assets/horse1/transparent/Screenshot_2025-09-26_at_9.56.03_PM-removebg-preview.png'); }
+    25% { background-image: url('./assets/horse1/transparent/Screenshot_2025-09-26_at_9.56.12_PM-removebg-preview.png'); }
+    50% { background-image: url('./assets/horse1/transparent/Screenshot_2025-09-26_at_9.56.17_PM-removebg-preview.png'); }
+    75% { background-image: url('./assets/horse1/transparent/Screenshot_2025-09-26_at_9.56.23_PM-removebg-preview.png'); }
+    100% { background-image: url('./assets/horse1/transparent/Screenshot_2025-09-26_at_9.56.03_PM-removebg-preview.png'); }
+}
+
+@keyframes gallop-cycle-2 {
+    0% { background-image: url('./assets/horse2/animation1.png'); }
+    20% { background-image: url('./assets/horse2/animation2.png'); }
+    40% { background-image: url('./assets/horse2/animation3.png'); }
+    60% { background-image: url('./assets/horse2/animation4.png'); }    
+    80% { background-image: url('./assets/horse2/animation5.png'); }
+    100% { background-image: url('./assets/horse2/animation1.png'); }
+}
+
+@keyframes gallop-cycle-3 {
+    0% { background-image: url('./assets/horse3/transparent/Screenshot_2025-09-26_at_9.56.03_PM-removebg-preview.png'); }
+    25% { background-image: url('./assets/horse3/transparent/Screenshot_2025-09-26_at_9.56.12_PM-removebg-preview.png'); }
+    50% { background-image: url('./assets/horse3/transparent/Screenshot_2025-09-26_at_9.56.17_PM-removebg-preview.png'); }
+    75% { background-image: url('./assets/horse3/transparent/Screenshot_2025-09-26_at_9.56.23_PM-removebg-preview.png'); }
+    100% { background-image: url('./assets/horse3/transparent/Screenshot_2025-09-26_at_9.56.03_PM-removebg-preview.png'); }
+}
+
+/* Default animation for horses 4-10 (will use their own animations when sprites are added) */
+@keyframes gallop-placeholder {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05) rotate(1deg); }
+    100% { transform: scale(1); }
+}
+
+.horse-1.racing { animation: gallop-cycle-1 0.6s infinite; }
+.horse-2.racing { animation: gallop-cycle-2 0.6s infinite; }
+.horse-3.racing { animation: gallop-cycle-3 0.7s infinite; }
+.horse-4.racing { animation: gallop-placeholder 0.8s infinite; }
+.horse-5.racing { animation: gallop-placeholder 0.9s infinite; }
+.horse-6.racing { animation: gallop-placeholder 1.0s infinite; }
+.horse-7.racing { animation: gallop-placeholder 0.7s infinite; }
+.horse-8.racing { animation: gallop-placeholder 0.8s infinite; }
+.horse-9.racing { animation: gallop-placeholder 0.9s infinite; }
+.horse-10.racing { animation: gallop-placeholder 1.0s infinite; }

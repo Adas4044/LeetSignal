@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetSignal Horse Racing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <h1 class="game-title">🏆 LEETCODE HORSE RACING 🏆</h1>
+            <div class="subtitle">Real-time racing based on LeetCode submissions!</div>
+        </header>
+
+        <!-- Racing Track -->
+        <div class="racing-container">
+            <div class="grandstand">
+                <div class="spectators">
+                    <div class="spectator">👤</div>
+                    <div class="spectator">👤</div>
+                    <div class="spectator">👤</div>
+                    <div class="spectator">👤</div>
+                    <div class="spectator">👤</div>
+                    <div class="spectator">👤</div>
+                    <div class="spectator">👤</div>
+                    <div class="spectator">👤</div>
+                </div>
+            </div>
+
+            <div class="track-container">
+                <div class="finish-line"></div>
+                <div id="race-track" class="race-track">
+                    <!-- Horses will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h2>🏅 Leaderboard</h2>
+            <div id="leaderboard-list" class="leaderboard-list">
+                <!-- Leaderboard entries will be added here -->
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="start-race" class="btn btn-primary">Start Race</button>
+            <button id="stop-race" class="btn btn-secondary" disabled>Stop Race</button>
+            <button id="reset-race" class="btn btn-secondary">Reset Race</button>
+            <div class="race-info">
+                <span id="race-status">Ready to start</span>
+                <span id="update-time">Last update: Never</span>
+            </div>
+        </div>
+
+        <!-- TEST CONTROLS - Remove this section when done testing -->
+        <div class="test-controls">
+            <h3>🧪 Test Controls (Remove when done testing)</h3>
+            <div class="test-buttons">
+                <button id="test-increment" class="btn btn-test">+1 Problem Solved</button>
+                <select id="test-user-select">
+                    <option value="">Select user to increment</option>
+                </select>
+                <div class="test-info">
+                    <small>This simulates solving a LeetCode problem for testing purposes</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Panel -->
+        <div class="config-panel">
+            <h3>Race Configuration</h3>
+            <div class="config-group">
+                <label for="update-interval">Update Interval (seconds):</label>
+                <input type="number" id="update-interval" value="30" min="5" max="300">
+            </div>
+            <div class="config-group">
+                <label for="usernames">LeetCode Usernames (comma separated):</label>
+                <input type="text" id="usernames" placeholder="user1,user2,user3..." value="">
+            </div>
+            <button id="apply-config" class="btn btn-accent">Apply Configuration</button>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Fetching LeetCode data...</p>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

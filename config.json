@@ -1,0 +1,4 @@
+{
+    "profiles": ["example_user1", "example_user2", "example_user3"],
+    "ntfy_topic": "leetcode_race"
+}
