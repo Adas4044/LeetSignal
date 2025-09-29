@@ -4,6 +4,8 @@ class HorseRacingGame {
         this.horses = [];
         this.raceData = {};
         this.testData = {}; // For testing increments
+        this.raceStartTime = null; // Track when the race started
+        this.raceScore = {}; // Track problems solved since race start
         this.isRacing = false;
         this.updateInterval = 30; // seconds
         this.intervalId = null;
@@ -70,6 +72,10 @@ class HorseRacingGame {
         this.stopBtn.disabled = false;
         this.raceStatus.textContent = 'Racing in progress...';
         
+        // Set race start time
+        this.raceStartTime = Date.now();
+        console.log(`🏁 Race started at: ${new Date(this.raceStartTime).toLocaleString()}`);
+        
         // Initialize test data and race data if not exists
         this.usernames.forEach(username => {
             if (!(username in this.testData)) {
@@ -77,6 +83,9 @@ class HorseRacingGame {
             }
             if (!(username in this.raceData)) {
                 this.raceData[username] = 0;
+            }
+            if (!(username in this.raceScore)) {
+                this.raceScore[username] = 0;
             }
         });
         
@@ -119,9 +128,57 @@ class HorseRacingGame {
         
         this.raceData = {};
         this.testData = {};
+        this.raceScore = {};
+        this.raceStartTime = null; // Clear race start time
         this.maxSubmissions = 0;
         this.updateLeaderboard();
         this.updateTime.textContent = 'Last update: Never';
+    }
+
+    showNewProblemNotification(username, newProblems) {
+        // Create notification for new problem solved
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 2px solid #2E7D32;
+            font-size: 1rem;
+            font-weight: bold;
+            z-index: 1002;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            max-width: 300px;
+        `;
+        
+        const problemText = newProblems.length === 1 
+            ? `solved: ${newProblems[0]}` 
+            : `solved ${newProblems.length} problems!`;
+        notification.innerHTML = `🎉 <strong>${username}</strong><br>${problemText}`;
+        
+        document.body.appendChild(notification);
+        
+        // Add slide-in animation if not exists
+        if (!document.getElementById('notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = `
+                @keyframes slideIn {
+                    0% { transform: translateX(100%); opacity: 0; }
+                    100% { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Remove after 4 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 4000);
     }
 
     testIncrement() {
@@ -237,30 +294,33 @@ class HorseRacingGame {
 
     async fetchLeetCodeData(username) {
         try {
-            // Using the same API endpoint as your Go application
-            const response = await fetch(`https://leetcode-api-pied.vercel.app/user/${username}`);
+            // Use the submissions endpoint like in the Go version
+            const submissionsResponse = await fetch(`https://leetcode-api-pied.vercel.app/user/${username}/submissions`);
             
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (!submissionsResponse.ok) {
+                throw new Error(`HTTP error! status: ${submissionsResponse.status}`);
             }
             
-            const data = await response.json();
+            const submissions = await submissionsResponse.json();
             
-            // Find total submissions from the submitStats
-            const allSubmissions = data.submitStats?.acSubmissionNum?.find(
-                item => item.difficulty === 'All'
+            // Filter for accepted submissions only
+            const acceptedSubmissions = submissions.filter(submission => 
+                submission.statusDisplay === 'Accepted'
             );
+            
+            console.log(`Fetched ${acceptedSubmissions.length} accepted submissions for ${username}`);
             
             return {
                 username,
-                totalSolved: allSubmissions ? allSubmissions.count : 0,
-                success: true
+                acceptedSubmissions: acceptedSubmissions,
+                success: true,
+                lastFetch: Date.now()
             };
         } catch (error) {
             console.error(`Error fetching data for ${username}:`, error);
             return {
                 username,
-                totalSolved: 0,
+                acceptedSubmissions: [],
                 success: false,
                 error: error.message
             };
@@ -274,11 +334,53 @@ class HorseRacingGame {
             const promises = this.usernames.map(username => this.fetchLeetCodeData(username));
             const results = await Promise.all(promises);
             
-            // Update race data - combine real data with test increments
+            // Process each user's data to count problems solved since race start
             results.forEach(result => {
                 if (result.success) {
-                    const testIncrement = this.testData[result.username] || 0;
-                    this.raceData[result.username] = result.totalSolved + testIncrement;
+                    const username = result.username;
+                    
+                    if (this.raceStartTime) {
+                        // Race mode: count submissions made since race started
+                        const raceSubmissions = result.acceptedSubmissions.filter(submission => {
+                            // Parse timestamp (it's a string in UNIX format)
+                            const submissionTime = parseInt(submission.timestamp) * 1000; // Convert to milliseconds
+                            return submissionTime >= this.raceStartTime;
+                        });
+                        
+                        // Count unique problems solved since race start
+                        const uniqueProblems = new Set();
+                        raceSubmissions.forEach(submission => {
+                            if (submission.title) {
+                                uniqueProblems.add(submission.title);
+                            }
+                        });
+                        
+                        const newScore = uniqueProblems.size;
+                        const previousScore = this.raceScore[username] || 0;
+                        
+                        // Check if score increased (new problems solved)
+                        if (newScore > previousScore) {
+                            const newProblemsCount = newScore - previousScore;
+                            console.log(`🎉 ${username} solved ${newProblemsCount} new problem(s) since race started! Total: ${newScore}`);
+                            
+                            // List the actual new problems
+                            const newProblemsList = [...uniqueProblems].slice(previousScore);
+                            this.showNewProblemNotification(username, newProblemsList);
+                        }
+                        
+                        // Update race score
+                        this.raceScore[username] = newScore;
+                        
+                        // Update race data (race score + test increments)
+                        const testIncrement = this.testData[username] || 0;
+                        this.raceData[username] = newScore + testIncrement;
+                    } else {
+                        // No race started yet, just show total accepted count
+                        const totalAccepted = result.acceptedSubmissions.length;
+                        const testIncrement = this.testData[username] || 0;
+                        this.raceData[username] = testIncrement; // Only test increments when not racing
+                        console.log(`${username} has ${totalAccepted} total accepted submissions`);
+                    }
                 }
             });
             
@@ -346,10 +448,14 @@ class HorseRacingGame {
             // Update horse info
             const horseInfo = horse.element.querySelector('.horse-info');
             const testIncrement = this.testData[horse.username] || 0;
-            const realSolved = submissions - testIncrement;
-            const infoText = testIncrement > 0 
-                ? `${horse.username} (${realSolved}+${testIncrement} solved)`
-                : `${horse.username} (${submissions} solved)`;
+            const raceScore = this.raceScore[horse.username] || 0;
+            
+            let infoText;
+            if (testIncrement > 0) {
+                infoText = `${horse.username} (${raceScore}+${testIncrement} solved)`;
+            } else {
+                infoText = `${horse.username} (${raceScore} new problems)`;
+            }
             horseInfo.textContent = infoText;
             
             // Check for winner (horse that reaches 95% of track or more)
